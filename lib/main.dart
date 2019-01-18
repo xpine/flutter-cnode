@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter_cnode/views/topic_list.dart' as TopicList;
 
 void main() => runApp(MyApp());
@@ -22,7 +23,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter CNode'),
-      routes: {},
+      routes: {
+        
+      },
     );
   }
 }
@@ -57,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage>
       tab: 'share',
     ),
     TopicList.Page(key: ObjectKey('ask'), tab: 'ask'),
+    TopicList.Page(key: ObjectKey('dev'), tab: 'dev'),
   ];
 
   @override
@@ -65,9 +69,15 @@ class _MyHomePageState extends State<MyHomePage>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.settings,color: Colors.white,),
+          ),
+        ],
       ),
       body: PageView(
-        children: _widgetOptions,
+        children: this._widgetOptions,
+        onPageChanged: this._onPageChanged,
         controller: this._pageController,
       ),
       // Container(
@@ -81,10 +91,12 @@ class _MyHomePageState extends State<MyHomePage>
           BottomNavigationBarItem(icon: Icon(Icons.share), title: Text('分享')),
           BottomNavigationBarItem(
               icon: Icon(Icons.question_answer), title: Text('问答')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.developer_mode), title: Text('测试')),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: this._selectedIndex,
         fixedColor: Colors.blue[500],
-        onTap: _onItemTapped,
+        onTap: this._onItemTapped,
       ),
     );
   }
@@ -95,6 +107,17 @@ class _MyHomePageState extends State<MyHomePage>
     });
     _pageController.animateToPage(index,
         duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+  }
+
+  Timer _timer;
+  // 放置bottombar抖动
+  _onPageChanged(int index) {
+    _timer.cancel();
+    _timer = Timer(Duration(milliseconds: 400), () {
+      setState(() {
+        _selectedIndex = index;
+      });
+    });
   }
 
   @override

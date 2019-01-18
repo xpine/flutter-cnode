@@ -17,7 +17,7 @@ class _TopicCardState extends State<TopicCard> {
         onTap: ()=> 
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_)=> TopicDetail.Page()
+              builder: (_)=> TopicDetail.Page(topicId: topic['id'],)
             )
           )
         ,
