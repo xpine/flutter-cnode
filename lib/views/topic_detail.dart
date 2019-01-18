@@ -8,7 +8,12 @@ class Page extends StatefulWidget {
 
 class _PageState extends State<Page> {
   @override
-    Widget build(BuildContext context) {
-      return  Text('Index 1: excellent');
-    }
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('topic'),
+      ),
+      body: Text('123'),
+    );
+  }
 }

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cnode/views/all.dart' as All;
-import 'package:flutter_cnode/views/excellent.dart' as Excellent;
-import 'package:flutter_cnode/views/share.dart' as Share;
-import 'package:flutter_cnode/views/qa.dart' as Qa;
-
+import 'package:flutter_cnode/views/topic_list.dart' as TopicList;
 
 void main() => runApp(MyApp());
 
@@ -26,6 +22,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter CNode'),
+      routes: {},
     );
   }
 }
@@ -37,25 +34,45 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _pageController = PageController(initialPage: 0);
+  }
+
   int _selectedIndex = 0;
+  PageController _pageController;
 
   final _widgetOptions = [
-    All.Page(),
-    Excellent.Page(),
-    Share.Page(),
-    Qa.Page(),
+    TopicList.Page(key: ObjectKey('all'), tab: ''),
+    TopicList.Page(
+      key: ObjectKey('good'),
+      tab: 'good',
+    ),
+    TopicList.Page(
+      key: ObjectKey('share'),
+      tab: 'share',
+    ),
+    TopicList.Page(key: ObjectKey('ask'), tab: 'ask'),
   ];
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Container(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: PageView(
+        children: _widgetOptions,
+        controller: this._pageController,
       ),
+      // Container(
+      //   child: _widgetOptions.elementAt(_selectedIndex),
+      // ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
@@ -76,5 +93,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.animateToPage(index,
+        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
