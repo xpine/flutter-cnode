@@ -18,12 +18,10 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
   ScrollController _scrollController = new ScrollController();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     this._refresh();
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.maxScrollExtent - _scrollController.position.pixels < 50.0) {
         this._loadMore();
       }
     });
@@ -44,6 +42,7 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
     if (this.mounted) {
       setState(() {
         this.topics = response.data['data'];
+        this.init = false;
         print(this.topics.length);
       });
     }
@@ -76,6 +75,9 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     print(this.loading);
+    if (this.init) {
+      return Component.Spin();
+    }
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       onRefresh: this._refresh,
@@ -91,9 +93,8 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
                     ))
                 .toList(),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[Text(this.loading ? '加载中...' : '')],
+          Container(
+            child: this.loading? Component.Spin():null
           )
         ],
       ),
@@ -101,7 +102,5 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
-

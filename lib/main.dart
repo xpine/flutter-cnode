@@ -23,9 +23,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter CNode'),
-      routes: {
-        
-      },
+      routes: {},
     );
   }
 }
@@ -62,16 +60,17 @@ class _MyHomePageState extends State<MyHomePage>
     TopicList.Page(key: ObjectKey('ask'), tab: 'ask'),
     TopicList.Page(key: ObjectKey('dev'), tab: 'dev'),
   ];
-
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.settings,color: Colors.white,),
+            icon: Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -112,7 +111,10 @@ class _MyHomePageState extends State<MyHomePage>
   Timer _timer;
   // 放置bottombar抖动
   _onPageChanged(int index) {
-    _timer.cancel();
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    print('pageChanged $index');
     _timer = Timer(Duration(milliseconds: 400), () {
       setState(() {
         _selectedIndex = index;

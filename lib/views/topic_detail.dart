@@ -19,8 +19,8 @@ class _PageState extends State<Page> {
   ScrollController _scrollController = new ScrollController();
 
   bool _loading = true;
-  bool _once = true;
   var _topic = {};
+  bool _init = true;
   var _replies = [];
   @override
   void initState() {
@@ -41,6 +41,7 @@ class _PageState extends State<Page> {
     setState(() {
       _loading = false;
       _topic = response.data['data'];
+      _init = false;
       _replies = _topic['replies'];
     });
   }
@@ -54,8 +55,8 @@ class _PageState extends State<Page> {
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: this._refresh,
-        child: this._loading
-            ? Text('加载中')
+        child: this._init
+            ? Component.Spin()
             : ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 controller: this._scrollController,
@@ -98,6 +99,7 @@ class _PageState extends State<Page> {
                   Column(
                     children: _replies
                         .map((reply) => Component.TopicReply(
+                              index:_replies.indexOf(reply),
                               reply: reply,
                             ))
                         .toList(),
