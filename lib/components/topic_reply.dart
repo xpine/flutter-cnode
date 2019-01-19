@@ -14,7 +14,6 @@ class _TopicReplyState extends State<TopicReply> {
   @override
   Widget build(BuildContext context) {
     var reply = widget.reply;
-    print('reply ${reply['content']}');
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -52,13 +51,18 @@ class _TopicReplyState extends State<TopicReply> {
                             children: <Widget>[
                               GestureDetector(
                                 onTap: () => {},
-                                child: Icon(Icons.thumb_up ,size: 14,),
+                                child: Icon(
+                                  Icons.thumb_up,
+                                  size: 14,
+                                ),
                               ),
                               GestureDetector(
                                 onTap: () => {},
-                                child: Icon(Icons.reply,size: 14,),
+                                child: Icon(
+                                  Icons.reply,
+                                  size: 14,
+                                ),
                               ),
-                              
                             ],
                           )
                         ],
