@@ -36,37 +36,55 @@ class _TopicCardState extends State<TopicCard> {
             ],
             // border: Border(bottom: BorderSide(color: Colors.grey))
           ),
-          child: Row(children: <Widget>[
-            Image.network(
-              topic['author']['avatar_url'],
-              width: 30.0,
-              height: 30.0,
-            ),
-            this.renderTag(topic),
-            Expanded(
-                child: Container(
-              child: Text(
-                topic['title'],
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            )),
-            Container(
-                width: 90,
+          
+          child:Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:[
+              Container(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('${topic['reply_count']}',
-                        style: TextStyle(color: Colors.purple)),
-                    Text('/'),
-                    Text('${topic['visit_count']}')
+                  children: [
+                    this.renderTag(topic),
+                    Expanded(
+                      child: Text(
+                        topic['title'],
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 16),
+                        maxLines: 1,
+                      ),
+                    )
                   ],
-                )),
-            Text(this.getTimeDiff(topic['last_reply_at'])),
-          ]),
+                )
+              ),
+              Row(children: <Widget>[
+                Image.network(
+                  topic['author']['avatar_url'],
+                  width: 30.0,
+                  height: 30.0,
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(left: 5.0,right: 5.0),
+                    child: Text('${topic['author']['loginname']}'),
+                  ),
+                ),
+                Container(
+                    width: 90,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text('${topic['reply_count']}',
+                            style: TextStyle(color: Colors.purple)),
+                        Text('/'),
+                        Text('${topic['visit_count']}')
+                      ],
+                    )),
+                Text(this.getTimeDiff(topic['last_reply_at'])),
+              ]),
+            ]
+          )
         ));
   }
-
   getTimeDiff(String t) {
     var now = DateTime.now();
     var tString = DateTime.parse(t);
@@ -108,9 +126,9 @@ class _TopicCardState extends State<TopicCard> {
     }
     return Container(
       color: bgColor,
-      margin: EdgeInsets.only(left: 5.0, right: 5.0),
+      margin: EdgeInsets.only(right: 5.0),
       padding: EdgeInsets.only(left: 5.0, right: 5.0),
-      child: Text(text, style: TextStyle(color: color)),
+      child: Text(text, style: TextStyle(color: color,fontSize: 11)),
     );
   }
 }

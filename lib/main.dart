@@ -99,6 +99,20 @@ class _MyHomePageState extends State<MyHomePage>
       // Container(
       //   child: _widgetOptions.elementAt(_selectedIndex),
       // ),
+      floatingActionButton: StoreConnector(
+        converter: (store) => store.state,
+        builder: (BuildContext context, state) {
+          var hasToken = state.token != null && state.token != '';
+          if (hasToken) {
+            return FloatingActionButton(
+              child: Icon(Icons.create),
+              onPressed: () {},
+            );
+          } else {
+            return Text('');
+          }
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[

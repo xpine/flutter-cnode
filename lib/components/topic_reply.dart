@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class TopicReply extends StatefulWidget {
   TopicReply({Key key, this.reply, this.index}) : super(key: key);
@@ -47,24 +48,34 @@ class _TopicReplyState extends State<TopicReply> {
                               Text('  ${widget.index + 1}楼'),
                             ],
                           ),
-                          Row(
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () => {},
-                                child: Icon(
-                                  Icons.thumb_up,
-                                  size: 14,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () => {},
-                                child: Icon(
-                                  Icons.reply,
-                                  size: 14,
-                                ),
-                              ),
-                            ],
-                          )
+                          StoreConnector(
+                            converter: (store) => store.state.token,
+                            builder: (BuildContext context, token) {
+                              var hasToken = token != null && token != '';
+                              if (hasToken) {
+                                return Row(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      onTap: () => {},
+                                      child: Icon(
+                                        Icons.thumb_up,
+                                        size: 14,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => {},
+                                      child: Icon(
+                                        Icons.reply,
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Text('');
+                              }
+                            },
+                          ),
                         ],
                       ),
                       Text(
