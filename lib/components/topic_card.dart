@@ -122,6 +122,8 @@ class _TopicCardState extends State<TopicCard> {
         text = '分享';
       } else if (tab == 'ask') {
         text = '问答';
+      } else if(tab =='dev'){
+        text = '测试';
       }
     }
     return Container(

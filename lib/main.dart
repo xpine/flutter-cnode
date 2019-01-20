@@ -4,6 +4,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_cnode/views/topic_list.dart' as TopicList;
 import 'package:flutter_cnode/views/login.dart';
+import 'package:flutter_cnode/views/create_topic.dart';
 import 'package:flutter_cnode/store/store.dart';
 
 // final String token = '12';
@@ -106,7 +107,10 @@ class _MyHomePageState extends State<MyHomePage>
           if (hasToken) {
             return FloatingActionButton(
               child: Icon(Icons.create),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (_) => CreateTopic()));
+              },
             );
           } else {
             return Text('');
