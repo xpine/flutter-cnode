@@ -3,8 +3,10 @@
 // @immutable
 class AppState {
   String token;
+  String loginname;
+  String avatar_url;
   int count;
-  AppState({this.token, this.count}) : super();
+  AppState({this.token, this.count, this.avatar_url, this.loginname}) : super();
 
   static AppState rehydrationJSON(dynamic json) => AppState();
 
@@ -13,11 +15,15 @@ class AppState {
   AppState copyWith({
     bool rehydrated,
     String token,
+    String loginname,
+    String avatar_url,
     int count,
   }) {
     return new AppState(
       token: token ?? this.token,
       count: count ?? this.count,
+      loginname:loginname ?? this.loginname,
+      avatar_url:avatar_url??this.avatar_url,
     );
   }
 
@@ -25,7 +31,9 @@ class AppState {
   String toString() {
     return '''AppState{
             token: $token,
-            count: $count
+            count: $count,
+            loginname:$loginname,
+            avatar_url:$avatar_url,
         }''';
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_cnode/api/request.dart' as Request;
 import 'package:flutter_cnode/components/index.dart' as Component;
-
 class Page extends StatefulWidget {
   final tab;
   Page({Key key, this.tab}) : super(key: key);
