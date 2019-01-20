@@ -55,20 +55,11 @@ class _TopicReplyState extends State<TopicReply> {
                               if (hasToken) {
                                 return Row(
                                   children: <Widget>[
-                                    GestureDetector(
-                                      onTap: () => {},
-                                      child: Icon(
-                                        Icons.thumb_up,
-                                        size: 14,
-                                      ),
+                                    Icon(
+                                      Icons.thumb_up,
+                                      size: 14,
                                     ),
-                                    GestureDetector(
-                                      onTap: () => {},
-                                      child: Icon(
-                                        Icons.reply,
-                                        size: 14,
-                                      ),
-                                    ),
+                                    Text('${reply['ups'].length}')
                                   ],
                                 );
                               } else {

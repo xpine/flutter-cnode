@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_cnode/api/request.dart' as Request;
 import 'package:flutter_cnode/components/index.dart' as Component;
+
 class Page extends StatefulWidget {
   final tab;
   Page({Key key, this.tab}) : super(key: key);
@@ -20,7 +21,9 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
     super.initState();
     this._refresh();
     _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent - _scrollController.position.pixels < 50.0) {
+      if (_scrollController.position.maxScrollExtent -
+              _scrollController.position.pixels <
+          50.0) {
         this._loadMore();
       }
     });
@@ -53,9 +56,11 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
       return;
     }
     print('loadmore');
-    setState(() {
-      this.loading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        this.loading = true;
+      });
+    }
     Response response = await api.dio
         .get('/topics?limit=${this.limit}&page=${this.page}&tab=${widget.tab}');
     this.loading = false;
@@ -92,9 +97,7 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
                     ))
                 .toList(),
           ),
-          Container(
-            child: this.loading? Component.Spin():null
-          )
+          Container(child: this.loading ? Component.Spin() : null)
         ],
       ),
     );

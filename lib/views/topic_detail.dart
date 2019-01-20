@@ -17,7 +17,7 @@ class _PageState extends State<Page> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   ScrollController _scrollController = new ScrollController();
-
+  TextEditingController _textEditingController = TextEditingController();
   bool _loading = true;
   var _topic = {};
   bool _init = true;
@@ -51,6 +51,22 @@ class _PageState extends State<Page> {
     return Scaffold(
       appBar: AppBar(
         title: Text('topic'),
+      ),
+      bottomNavigationBar: Container(
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: TextField(
+                controller: _textEditingController,
+                decoration: InputDecoration(hintText: '请输入回复内容'),
+              ),
+            ),
+            RaisedButton(
+              onPressed: this.reply,
+              child: Text('回复'),
+            ),
+          ],
+        ),
       ),
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
@@ -99,7 +115,7 @@ class _PageState extends State<Page> {
                   Column(
                     children: _replies
                         .map((reply) => Component.TopicReply(
-                              index:_replies.indexOf(reply),
+                              index: _replies.indexOf(reply),
                               reply: reply,
                             ))
                         .toList(),
@@ -108,6 +124,21 @@ class _PageState extends State<Page> {
               ),
       ),
     );
+  }
+
+  reply() async {
+    var text = _textEditingController.text;
+    if (text != null && text != '') {
+      try {
+        var ret = await api.dio
+            .post('/topic/${widget.topicId}/replies', data: {'content': text});
+        print('reply $ret');
+        _textEditingController.text = '';
+        _refreshIndicatorKey.currentState.show();
+      } catch (e) {
+        print('reply $e');
+      }
+    }
   }
 
   getDiffTime(String t) {
