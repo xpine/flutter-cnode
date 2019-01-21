@@ -23,6 +23,7 @@ Future<Store<AppState>> createStore() async {
       token: await getPerf('token') ?? null,
       loginname: await getPerf('loginname') ?? null,
       avatar_url: await getPerf('avatar_url') ?? null,
+      id:await getPerf('id') ?? null,
     ),
     middleware: [ThunkMiddleware()],
   );

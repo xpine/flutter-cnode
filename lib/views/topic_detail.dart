@@ -22,7 +22,7 @@ class _PageState extends State<Page> {
   ScrollController _scrollController = new ScrollController();
   TextEditingController _textEditingController = TextEditingController();
   FocusNode _focusNode = FocusNode();
-  FocusNode _modalFocusNode = FocusNode();
+  FocusNode _modalFocusNode;
   bool _loading = true;
   var _topic = {};
   bool _init = true;
@@ -181,7 +181,7 @@ class _PageState extends State<Page> {
                                   },
                                   child: Component.TopicReply(
                                     index: _replies.indexOf(reply),
-                                    topic:_topic,
+                                    topic: _topic,
                                     reply: reply,
                                   )),
                             )
@@ -196,17 +196,23 @@ class _PageState extends State<Page> {
   }
 
   tapTextField() {
+    _focusNode.unfocus();
+    this._modalFocusNode = FocusNode();
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return Container(
-            height: 500,
-            padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            height: 385,
+            padding:
+                EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(
                   child: TextField(
+                    onSubmitted: (val) {
+                      Navigator.of(context).pop();
+                    },
                     autofocus: true,
                     controller: _textEditingController,
                     focusNode: _modalFocusNode,
@@ -286,7 +292,6 @@ class _PageState extends State<Page> {
             .post('/topic/${widget.topicId}/replies', data: {'content': text});
         print('reply $ret');
         _textEditingController.text = '';
-        _focusNode.unfocus();
         _modalFocusNode.unfocus();
         _refreshIndicatorKey.currentState.show();
       } catch (e) {

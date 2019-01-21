@@ -120,8 +120,8 @@ class _MyHomePageState extends State<MyHomePage>
                       title: Text('个人信息'),
                       onTap: () {
                         Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) => User(state.loginname)));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => User(state.loginname)));
                       }),
                 ),
                 ClipRect(
@@ -129,10 +129,10 @@ class _MyHomePageState extends State<MyHomePage>
                     leading:
                         CircleAvatar(child: Icon(Icons.collections_bookmark)),
                     title: Text('我的收藏'),
-                    onTap: (){
+                    onTap: () {
                       Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) => Collection(state.loginname)));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => Collection(state.loginname)));
                     },
                   ),
                 ),
@@ -260,8 +260,9 @@ class _MyHomePageState extends State<MyHomePage>
     setState(() {
       _selectedIndex = index;
     });
-    _pageController.animateToPage(index,
-        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+    _pageController.jumpToPage(index);
+    // _pageController.animateToPage(index,
+    //     duration: Duration(milliseconds: 300), curve: Curves.easeIn);
   }
 
   Timer _timer;
