@@ -4,6 +4,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_cnode/components/index.dart' as Component;
 import 'package:flutter_cnode/api/request.dart' as Request;
+import 'package:flutter_cnode/views/user.dart';
 
 var api = new Request.Api();
 
@@ -55,6 +56,7 @@ class _PageState extends State<Page> {
 
     _scaffoldkey.currentState.showSnackBar(snackbar);
   }
+
   // 收藏取消收藏
   changeCollect() async {
     if (_topic['is_collect'] != null && _topic['is_collect']) {
@@ -191,46 +193,57 @@ class _PageState extends State<Page> {
   }
 
   tapReply(reply) {
+    print(MediaQuery.of(context).padding.bottom);
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return Container(
-            height: 90,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(10),
-                  child: Text('@${reply['author']['loginname']}'),
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: GestureDetector(
-                      onTap: () async {
-                        try {
-                          await api.dio.post('/reply/${reply['id']}/ups');
-                          Navigator.of(context).pop();
-                          _refreshIndicatorKey.currentState.show();
-                        } catch (e) {
-                          print(e);
-                        }
-                      },
-                      child: Card(
-                        child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(reply['is_uped'] ? '取消点赞' : '点赞'),
-                              ],
-                            )),
-                      ),
-                    ))
-                  ],
-                )
-              ],
-            ),
-          );
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom, top: 20),
+              // height: 200,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => User(reply['author']['loginname'])));
+                    },
+                    child: Card(
+                      child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text('查看${reply['author']['loginname']}个人信息'),
+                            ],
+                          )),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      try {
+                        await api.dio.post('/reply/${reply['id']}/ups');
+                        Navigator.of(context).pop();
+                        _refreshIndicatorKey.currentState.show();
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    child: Card(
+                      child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(reply['is_uped'] ? '取消点赞' : '点赞'),
+                            ],
+                          )),
+                    ),
+                  )
+                ],
+              ));
         });
   }
 

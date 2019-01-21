@@ -119,46 +119,45 @@ class _UserState extends State<User> {
     return Row(
       children: <Widget>[
         Expanded(
-            child: Container(
-          decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.grey))),
+          child: Container(
           padding: EdgeInsets.all(10),
           child: Column(
               children: topicList.map((topic) {
             return GestureDetector(
-              onTap: ()=> 
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_)=> TopicDetail.Page(topicId: topic['id'],)
-                  )
-                )
-              ,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(bottom: 5),
-                    child: Text(topic['title']),
-                  ),
-                  Row(
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => TopicDetail.Page(
+                          topicId: topic['id'],
+                        ))),
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  decoration: BoxDecoration(
+                    border: Border(top: BorderSide(color: Colors.grey))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Image.network(
-                        topic['author']['avatar_url'],
-                        width: 30.0,
-                        height: 30.0,
+                      Container(
+                        margin: EdgeInsets.only(bottom: 5),
+                        child: Text(topic['title']),
                       ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(left: 5.0, right: 5.0),
-                          child: Text('${topic['author']['loginname']}'),
-                        ),
-                      ),
-                      Text(this.getTimeDiff(topic['last_reply_at'])),
+                      Row(
+                        children: <Widget>[
+                          Image.network(
+                            topic['author']['avatar_url'],
+                            width: 30.0,
+                            height: 30.0,
+                          ),
+                          Expanded(
+                            child: Container(
+                              margin: EdgeInsets.only(left: 5.0, right: 5.0),
+                              child: Text('${topic['author']['loginname']}'),
+                            ),
+                          ),
+                          Text(this.getTimeDiff(topic['last_reply_at'])),
+                        ],
+                      )
                     ],
-                  )
-                ],
-              ),
-            );
+                  ),
+                ));
           }).toList()),
         )),
       ],
