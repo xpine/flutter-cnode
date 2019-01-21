@@ -103,6 +103,7 @@ class _TopicCardState extends State<TopicCard> {
     if (diff.inSeconds != 0) {
       return '${diff.inSeconds}秒前';
     }
+    return '刚刚';
   }
   renderTag(topic) {
     var text = '默认';

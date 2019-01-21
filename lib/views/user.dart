@@ -20,7 +20,6 @@ class _UserState extends State<User> {
   List _isExpand = [false, false];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     this._onRefresh();
   }

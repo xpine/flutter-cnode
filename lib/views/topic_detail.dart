@@ -22,6 +22,7 @@ class _PageState extends State<Page> {
   ScrollController _scrollController = new ScrollController();
   TextEditingController _textEditingController = TextEditingController();
   FocusNode _focusNode = FocusNode();
+  FocusNode _modalFocusNode = FocusNode();
   bool _loading = true;
   var _topic = {};
   bool _init = true;
@@ -108,6 +109,7 @@ class _PageState extends State<Page> {
           children: <Widget>[
             Expanded(
               child: TextField(
+                onTap: this.tapTextField,
                 controller: _textEditingController,
                 focusNode: _focusNode,
                 decoration: InputDecoration(hintText: '请输入回复内容'),
@@ -179,6 +181,7 @@ class _PageState extends State<Page> {
                                   },
                                   child: Component.TopicReply(
                                     index: _replies.indexOf(reply),
+                                    topic:_topic,
                                     reply: reply,
                                   )),
                             )
@@ -190,6 +193,34 @@ class _PageState extends State<Page> {
               ),
       ),
     );
+  }
+
+  tapTextField() {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 500,
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    autofocus: true,
+                    controller: _textEditingController,
+                    focusNode: _modalFocusNode,
+                    decoration: InputDecoration(hintText: '请输入回复内容'),
+                  ),
+                ),
+                RaisedButton(
+                  onPressed: this.reply,
+                  child: Text('回复'),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   tapReply(reply) {
@@ -255,6 +286,8 @@ class _PageState extends State<Page> {
             .post('/topic/${widget.topicId}/replies', data: {'content': text});
         print('reply $ret');
         _textEditingController.text = '';
+        _focusNode.unfocus();
+        _modalFocusNode.unfocus();
         _refreshIndicatorKey.currentState.show();
       } catch (e) {
         print('reply $e');

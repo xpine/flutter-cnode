@@ -26,11 +26,13 @@ ThunkFunction updateTokenAsync(Action action) =>
             .post('/accesstoken', data: {'accesstoken': action.payload});
         await prefs.setString('loginname', ret.data['loginname']);
         await prefs.setString('avatar_url', ret.data['avatar_url']);
+        await prefs.setString('id', ret.data['id']);
         print('token ${action.payload} ${ret.data}');
         action.payload = {
           'token': token,
           'loginname': ret.data['loginname'],
-          'avatar_url': ret.data['avatar_url']
+          'avatar_url': ret.data['avatar_url'],
+          'id':ret.data['id']
         };
         dispatch(action);
         if (action.success is Function) action.success();

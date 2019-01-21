@@ -8,6 +8,7 @@ import 'package:qrcode_reader/qrcode_reader.dart';
 import 'package:flutter_cnode/views/topic_list.dart' as TopicList;
 import 'package:flutter_cnode/views/create_topic.dart';
 import 'package:flutter_cnode/views/user.dart';
+import 'package:flutter_cnode/views/collection.dart';
 import 'package:flutter_cnode/store/store.dart';
 import 'package:flutter_cnode/actions/app_actions.dart';
 
@@ -127,8 +128,12 @@ class _MyHomePageState extends State<MyHomePage>
                   child: ListTile(
                     leading:
                         CircleAvatar(child: Icon(Icons.collections_bookmark)),
-                    title: Text('个人收藏'),
-                    onTap: () => {},
+                    title: Text('我的收藏'),
+                    onTap: (){
+                      Navigator.of(context).pop();
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) => Collection(state.loginname)));
+                    },
                   ),
                 ),
               ],

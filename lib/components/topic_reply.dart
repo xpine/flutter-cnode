@@ -3,11 +3,12 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class TopicReply extends StatefulWidget {
-  TopicReply({Key key, this.reply, this.index}) : super(key: key);
+  TopicReply({Key key, this.reply, this.index, this.topic}) : super(key: key);
 
   @override
   _TopicReplyState createState() => _TopicReplyState();
   final reply;
+  final topic;
   final int index;
 }
 
@@ -15,76 +16,87 @@ class _TopicReplyState extends State<TopicReply> {
   @override
   Widget build(BuildContext context) {
     var reply = widget.reply;
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.blueGrey)),
-      ),
-      child: Column(
-        children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    var topic = widget.topic;
+    return StoreConnector(
+      converter: (store) => store.state,
+      builder: (BuildContext context, state) {
+        var hasToken = state.token != null && state.token != '';
+        var isOwner =
+            topic['author']['loginname'] == reply['author']['loginname'];
+        return Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.blueGrey)),
+          ),
+          child: Column(
             children: <Widget>[
-              Image.network(
-                reply['author']['avatar_url'],
-                height: 30,
-                width: 30,
-              ),
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Image.network(
+                    reply['author']['avatar_url'],
+                    height: 30,
+                    width: 30,
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text(
-                                reply['author']['loginname'],
-                                style: TextStyle(fontWeight: FontWeight.w600),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    reply['author']['loginname'],
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text('  ${widget.index + 1}楼'),
+                                  isOwner?Container(
+                                    padding: EdgeInsets.all(3),
+                                    margin: EdgeInsets.only(left: 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.all(Radius.circular(5))
+                                    ),
+                                    child: Text('作者',style: TextStyle(color: Colors.white,fontSize: 8),),
+                                  ):Text('')
+                                ],
                               ),
-                              Text('  ${widget.index + 1}楼'),
+                              hasToken
+                                  ? Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.thumb_up,
+                                          size: 14,
+                                        ),
+                                        Text('${reply['ups'].length}')
+                                      ],
+                                    )
+                                  : Text(''),
                             ],
                           ),
-                          StoreConnector(
-                            converter: (store) => store.state.token,
-                            builder: (BuildContext context, token) {
-                              var hasToken = token != null && token != '';
-                              if (hasToken) {
-                                return Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.thumb_up,
-                                      size: 14,
-                                    ),
-                                    Text('${reply['ups'].length}')
-                                  ],
-                                );
-                              } else {
-                                return Text('');
-                              }
-                            },
+                          Text(
+                            ' ${this.getTimeDiff(reply['create_at'])}',
+                            style: TextStyle(fontSize: 12),
                           ),
+                          MarkdownBody(
+                              data: reply['content'].replaceAll(
+                                  '//static.cnodejs.org',
+                                  'https://static.cnodejs.org'))
                         ],
                       ),
-                      Text(
-                        ' ${this.getTimeDiff(reply['create_at'])}',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      MarkdownBody(
-                          data: reply['content'].replaceAll(
-                              '//static.cnodejs.org',
-                              'https://static.cnodejs.org'))
-                    ],
-                  ),
-                ),
+                    ),
+                  )
+                ],
               )
             ],
-          )
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -106,5 +118,6 @@ class _TopicReplyState extends State<TopicReply> {
     if (diff.inSeconds != 0) {
       return '${diff.inSeconds}秒前';
     }
+    return '刚刚';
   }
 }

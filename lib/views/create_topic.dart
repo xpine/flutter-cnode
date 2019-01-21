@@ -114,6 +114,7 @@ class _CreateTopicState extends State<CreateTopic> {
                   keyboardType: null,
                   enableInteractiveSelection: false,
                   decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(5),
                       hintText: '选择话题', labelText: '话题', errorText: _tabError),
                   controller: _tabEditingController,
                   enabled: true,
@@ -122,6 +123,7 @@ class _CreateTopicState extends State<CreateTopic> {
                 TextFormField(
                   enableInteractiveSelection: false,
                   decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(5),
                     hintText: '请输入标题',
                     labelText: '标题',
                   ),
@@ -136,6 +138,7 @@ class _CreateTopicState extends State<CreateTopic> {
                   maxLines: 10,
                   enableInteractiveSelection: false,
                   decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(5),
                     hintText: '请输入内容',
                     labelText: '内容',
                   ),
