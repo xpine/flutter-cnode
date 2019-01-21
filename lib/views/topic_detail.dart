@@ -24,6 +24,7 @@ class _PageState extends State<Page> {
   FocusNode _focusNode = FocusNode();
   FocusNode _modalFocusNode;
   bool _loading = true;
+  DateTime _now;
   var _topic = {};
   bool _init = true;
   var _replies = [];
@@ -48,6 +49,7 @@ class _PageState extends State<Page> {
       _topic = response.data['data'];
       _init = false;
       _replies = _topic['replies'];
+      _now = DateTime.now();
     });
   }
 
@@ -104,7 +106,17 @@ class _PageState extends State<Page> {
         ],
       ),
       bottomNavigationBar: Container(
-        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey,
+                offset: Offset(1, 1),
+                blurRadius: 1.0,
+                spreadRadius: 0.3)
+          ],
+        ),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -285,12 +297,14 @@ class _PageState extends State<Page> {
   }
 
   reply() async {
+    Navigator.of(context).pop();
     var text = _textEditingController.text;
     if (text != null && text != '') {
       try {
         var ret = await api.dio
             .post('/topic/${widget.topicId}/replies', data: {'content': text});
         print('reply $ret');
+
         _textEditingController.text = '';
         _modalFocusNode.unfocus();
         _refreshIndicatorKey.currentState.show();
@@ -301,7 +315,8 @@ class _PageState extends State<Page> {
   }
 
   getDiffTime(String t) {
-    var now = DateTime.now();
+    var now = _now;
+    print(now);
     var tString = DateTime.parse(t);
     var timestamp = tString.microsecondsSinceEpoch;
     var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp);

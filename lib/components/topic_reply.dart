@@ -13,10 +13,12 @@ class TopicReply extends StatefulWidget {
 }
 
 class _TopicReplyState extends State<TopicReply> {
+  DateTime _now;
   @override
   Widget build(BuildContext context) {
     var reply = widget.reply;
     var topic = widget.topic;
+    _now = DateTime.now();
     return StoreConnector(
       converter: (store) => store.state,
       builder: (BuildContext context, state) {
@@ -55,15 +57,22 @@ class _TopicReplyState extends State<TopicReply> {
                                         TextStyle(fontWeight: FontWeight.w600),
                                   ),
                                   Text('  ${widget.index + 1}楼'),
-                                  isOwner?Container(
-                                    padding: EdgeInsets.all(3),
-                                    margin: EdgeInsets.only(left: 5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.all(Radius.circular(5))
-                                    ),
-                                    child: Text('作者',style: TextStyle(color: Colors.white,fontSize: 8),),
-                                  ):Text('')
+                                  isOwner
+                                      ? Container(
+                                          padding: EdgeInsets.all(3),
+                                          margin: EdgeInsets.only(left: 5),
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5))),
+                                          child: Text(
+                                            '作者',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 8),
+                                          ),
+                                        )
+                                      : Text('')
                                 ],
                               ),
                               hasToken
@@ -101,7 +110,7 @@ class _TopicReplyState extends State<TopicReply> {
   }
 
   getTimeDiff(String t) {
-    var now = DateTime.now();
+    var now = _now;
     var tString = DateTime.parse(t);
     var timestamp = tString.microsecondsSinceEpoch;
     var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp);
