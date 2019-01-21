@@ -19,4 +19,4 @@ Flutter版cnode社区
   回复话题
 
 
- [预览](http://gt-fe.oss-cn-beijing.aliyuncs.com/img/c47642c01b0211e999fdbf5f202b9417.gif)
+ [预览](http://gt-fe.oss-cn-beijing.aliyuncs.com/img/251152801d6711e999fdbf5f202b9417.gif)
