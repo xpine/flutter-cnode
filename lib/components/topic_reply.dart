@@ -28,7 +28,14 @@ class _TopicReplyState extends State<TopicReply> {
         return Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Colors.blueGrey)),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey,
+                  offset: Offset(.1, .1),
+                  blurRadius: .1,
+                  spreadRadius: 0.1)
+            ],
           ),
           child: Column(
             children: <Widget>[
