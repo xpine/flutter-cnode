@@ -78,7 +78,6 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print(this.loading);
     if (this.init) {
       return Component.Spin();
     }

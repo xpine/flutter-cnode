@@ -1,12 +1,15 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:qrcode_reader/qrcode_reader.dart';
+
 import 'package:flutter_cnode/views/topic_list.dart' as TopicList;
 import 'package:flutter_cnode/views/create_topic.dart';
+import 'package:flutter_cnode/views/user.dart';
 import 'package:flutter_cnode/store/store.dart';
 import 'package:flutter_cnode/actions/app_actions.dart';
-import 'package:qrcode_reader/qrcode_reader.dart';
 
 // final String token = '12';
 void main() async {
@@ -112,10 +115,13 @@ class _MyHomePageState extends State<MyHomePage>
                 ),
                 Container(
                   child: ListTile(
-                    leading: CircleAvatar(child: Icon(Icons.account_box)),
-                    title: Text('个人信息'),
-                    onTap: () => {},
-                  ),
+                      leading: CircleAvatar(child: Icon(Icons.account_box)),
+                      title: Text('个人信息'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) => User(state.loginname)));
+                      }),
                 ),
                 ClipRect(
                   child: ListTile(
