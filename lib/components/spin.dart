@@ -4,7 +4,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 class Spin extends StatelessWidget {
   @override
     Widget build(BuildContext context) {
-      // TODO: implement build
       return SpinKitFadingCircle(
         size: 30.0,
         itemBuilder: (_, int index) {

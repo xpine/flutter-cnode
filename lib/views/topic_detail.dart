@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_cnode/components/index.dart' as Component;
 import 'package:flutter_cnode/api/request.dart' as Request;
 
@@ -16,8 +17,10 @@ class Page extends StatefulWidget {
 class _PageState extends State<Page> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   ScrollController _scrollController = new ScrollController();
   TextEditingController _textEditingController = TextEditingController();
+  FocusNode _focusNode = FocusNode();
   bool _loading = true;
   var _topic = {};
   bool _init = true;
@@ -46,18 +49,65 @@ class _PageState extends State<Page> {
     });
   }
 
+  showSnackBar(String text) {
+    var snackbar =
+        SnackBar(content: Text(text), duration: Duration(seconds: 2));
+
+    _scaffoldkey.currentState.showSnackBar(snackbar);
+  }
+  // 收藏取消收藏
+  changeCollect() async {
+    if (_topic['is_collect'] != null && _topic['is_collect']) {
+      // collected
+      try {
+        await api.dio.post('/topic_collect/de_collect',
+            data: {'topic_id': _topic['id']});
+        this.showSnackBar('取消收藏成功');
+        setState(() {
+          _topic['is_collect'] = false;
+        });
+      } catch (e) {
+        this.showSnackBar('取消收藏失败');
+      }
+    } else {
+      try {
+        await api.dio
+            .post('/topic_collect/collect', data: {'topic_id': _topic['id']});
+        this.showSnackBar('收藏成功');
+        setState(() {
+          _topic['is_collect'] = true;
+        });
+      } catch (e) {
+        this.showSnackBar('收藏失败');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldkey,
       appBar: AppBar(
-        title: Text('topic'),
+        title: Text('话题详情'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.favorite,
+                color: (_topic['is_collect'] != null && _topic['is_collect'])
+                    ? Colors.red
+                    : Colors.white),
+            onPressed:
+                (_topic['is_collect'] != null) ? this.changeCollect : null,
+          )
+        ],
       ),
       bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         child: Row(
           children: <Widget>[
             Expanded(
               child: TextField(
                 controller: _textEditingController,
+                focusNode: _focusNode,
                 decoration: InputDecoration(hintText: '请输入回复内容'),
               ),
             ),
@@ -112,18 +162,76 @@ class _PageState extends State<Page> {
                     ),
                     child: Text('${_topic['reply_count']}回复'),
                   ),
-                  Column(
-                    children: _replies
-                        .map((reply) => Component.TopicReply(
-                              index: _replies.indexOf(reply),
-                              reply: reply,
-                            ))
-                        .toList(),
+                  StoreConnector(
+                    converter: (store) => store.state,
+                    builder: (BuildContext context, state) {
+                      return Column(
+                        children: _replies
+                            .map(
+                              (reply) => GestureDetector(
+                                  onTap: () {
+                                    if (reply['author']['loginname'] !=
+                                        state.loginname) {
+                                      this.tapReply(reply);
+                                    }
+                                  },
+                                  child: Component.TopicReply(
+                                    index: _replies.indexOf(reply),
+                                    reply: reply,
+                                  )),
+                            )
+                            .toList(),
+                      );
+                    },
                   ),
                 ],
               ),
       ),
     );
+  }
+
+  tapReply(reply) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 90,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: Text('@${reply['author']['loginname']}'),
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: GestureDetector(
+                      onTap: () async {
+                        try {
+                          await api.dio.post('/reply/${reply['id']}/ups');
+                          Navigator.of(context).pop();
+                          _refreshIndicatorKey.currentState.show();
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: Card(
+                        child: Container(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(reply['is_uped'] ? '取消点赞' : '点赞'),
+                              ],
+                            )),
+                      ),
+                    ))
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 
   reply() async {

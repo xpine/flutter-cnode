@@ -12,6 +12,7 @@ class Api {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       try {
         var accesstoken = await prefs.get('token');
+        options.data = options.data ?? {};
         options.data['accesstoken'] = accesstoken;
         print('options $options');
         return options;

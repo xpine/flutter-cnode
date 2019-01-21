@@ -19,10 +19,10 @@ Future<Store<AppState>> createStore() async {
   Store<AppState> store = Store(
     appReducer,
     initialState: AppState(
-      count: 0, 
-      token: await getPerf('token')??null,
-      loginname: await getPerf('loginname')??null,
-      avatar_url: await getPerf('avatar_url')??null,
+      count: 0,
+      token: await getPerf('token') ?? null,
+      loginname: await getPerf('loginname') ?? null,
+      avatar_url: await getPerf('avatar_url') ?? null,
     ),
     middleware: [ThunkMiddleware()],
   );
@@ -31,7 +31,6 @@ Future<Store<AppState>> createStore() async {
 }
 
 getPerf(key) async {
-
   SharedPreferences prefs = await SharedPreferences.getInstance();
   print('getPerf: ${prefs.get(key)}');
   return prefs.get(key);
