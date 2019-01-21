@@ -119,9 +119,11 @@ class _MyHomePageState extends State<MyHomePage>
                       leading: CircleAvatar(child: Icon(Icons.account_box)),
                       title: Text('个人信息'),
                       onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => User(state.loginname)));
+                        if (state.loginname != null && state.loginname != '') {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => User(state.loginname)));
+                        }
                       }),
                 ),
                 ClipRect(
@@ -130,9 +132,11 @@ class _MyHomePageState extends State<MyHomePage>
                         CircleAvatar(child: Icon(Icons.collections_bookmark)),
                     title: Text('我的收藏'),
                     onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => Collection(state.loginname)));
+                      if (state.loginname != null && state.loginname != '') {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => Collection(state.loginname)));
+                      }
                     },
                   ),
                 ),
