@@ -74,6 +74,7 @@ class _CreateTopicState extends State<CreateTopic> {
         _tabEditingController.text = '';
         _tab = null;
         print('publish ret $ret');
+        this.showSnackBar('发布成功');
       } catch (e) {
         this.showSnackBar(e.response.data['error_msg']);
       }

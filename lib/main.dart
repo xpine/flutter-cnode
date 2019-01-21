@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_cnode/views/topic_list.dart' as TopicList;
-import 'package:flutter_cnode/views/login.dart';
 import 'package:flutter_cnode/views/create_topic.dart';
 import 'package:flutter_cnode/store/store.dart';
+import 'package:flutter_cnode/actions/app_actions.dart';
+import 'package:qrcode_reader/qrcode_reader.dart';
 
 // final String token = '12';
 void main() async {
@@ -53,6 +54,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with AutomaticKeepAliveClientMixin {
+  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
     // TODO: implement initState
@@ -76,21 +78,60 @@ class _MyHomePageState extends State<MyHomePage>
     TopicList.Page(key: ObjectKey('ask'), tab: 'ask'),
     TopicList.Page(key: ObjectKey('dev'), tab: 'dev'),
   ];
+  showSnackBar(String text) {
+    var snackbar =
+        SnackBar(content: Text(text), duration: Duration(seconds: 2));
+    _scaffoldkey.currentState.showSnackBar(snackbar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldkey,
+      drawer: StoreConnector(
+        converter: (store) => store.state,
+        builder: (BuildContext context, state) {
+          return Container(
+            width: 280,
+            decoration: BoxDecoration(color: Colors.white),
+            child: Column(
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  accountName: Text(
+                    state.loginname ?? '',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  accountEmail: Text(''),
+                  currentAccountPicture: CircleAvatar(
+                    child: Image.network(state.avatar_url ??
+                        'https://avatars2.githubusercontent.com/u/26139327?v=4&s=120'),
+                  ),
+                  otherAccountsPictures: <Widget>[
+                    this.buildLoginBtn(state),
+                  ],
+                ),
+                Container(
+                  child: ListTile(
+                    leading: CircleAvatar(child: Icon(Icons.account_box)),
+                    title: Text('个人信息'),
+                    onTap: () => {},
+                  ),
+                ),
+                ClipRect(
+                  child: ListTile(
+                    leading:
+                        CircleAvatar(child: Icon(Icons.collections_bookmark)),
+                    title: Text('个人收藏'),
+                    onTap: () => {},
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => Login())),
-            icon: Icon(
-              Icons.settings,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
       body: PageView(
         children: this._widgetOptions,
@@ -132,6 +173,75 @@ class _MyHomePageState extends State<MyHomePage>
         fixedColor: Colors.blue[500],
         onTap: this._onItemTapped,
       ),
+    );
+  }
+
+  buildLoginBtn(state) {
+    return StoreConnector(
+      converter: (store) {
+        if (state.token != null) {
+          return () {
+            return store.dispatch(removeTokenAsync(Action(
+              type: AppActions.RemoveToken,
+              success: () {
+                Navigator.of(context).pop();
+                this.showSnackBar('登出成功');
+              },
+              error: () {
+                this.showSnackBar('登出失败');
+              },
+            )));
+          };
+        } else {
+          return (String qrcode) {
+            print('ttoken $qrcode');
+            return store.dispatch(updateTokenAsync(Action(
+                type: AppActions.UpdateToken,
+                success: () {
+                  Navigator.of(context).pop();
+                  this.showSnackBar('登录成功');
+                },
+                error: () {
+                  this.showSnackBar('登录失败，请重试');
+                },
+                payload: qrcode)));
+          };
+        }
+      },
+      builder: (BuildContext context, callback) {
+        if (state.token != null) {
+          return GestureDetector(
+            onTap: callback,
+            child: Container(
+              child: Text(
+                '登出',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        } else {
+          return IconButton(
+            color: Colors.white,
+            icon: Icon(Icons.photo_camera),
+            onPressed: () async {
+              try {
+                String qrcode = await QRCodeReader()
+                    .setAutoFocusIntervalInMs(200) // default 5000
+                    .setForceAutoFocus(true) // default false
+                    .setTorchEnabled(true) // default false
+                    .setHandlePermissions(true) // default true
+                    .setExecuteAfterPermissionGranted(true) // default true
+                    .scan();
+                if (qrcode != null) {
+                  callback(qrcode);
+                }
+              } catch (e) {
+                print('e ${e}');
+              }
+            },
+          );
+        }
+      },
     );
   }
 
