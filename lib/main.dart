@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return StoreProvider(
         store: store,
         child: MaterialApp(
-          title: 'Flutter Demo',
+          title: 'CNode社区',
           theme: ThemeData(
             // This is the theme of your application.
             //
@@ -39,9 +39,9 @@ class MyApp extends StatelessWidget {
             // or simply save your changes to "hot reload" in a Flutter IDE).
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
-            primarySwatch: Colors.blue,
+            primarySwatch: Colors.green,
           ),
-          home: MyHomePage(title: 'Flutter CNode'),
+          home: MyHomePage(title: 'CNode社区'),
           // routes: {
           //   '/login': (BuildContext context) => Login(),
           // },
@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage>
               icon: Icon(Icons.developer_mode), title: Text('测试')),
         ],
         currentIndex: this._selectedIndex,
-        fixedColor: Colors.blue[500],
+        fixedColor: Theme.of(context).accentColor,
         onTap: this._onItemTapped,
       ),
     );
