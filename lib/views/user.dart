@@ -101,7 +101,7 @@ class _UserState extends State<User> {
                               return Container(
                                 padding: EdgeInsets.only(left: 10),
                                 child: Row(
-                                  children: <Widget>[Text('最近创建的主题')],
+                                  children: <Widget>[Text('最近回复的主题')],
                                 ),
                               );
                             },
