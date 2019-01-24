@@ -6,6 +6,7 @@ import 'package:redux/redux.dart';
 import 'package:qrcode_reader/qrcode_reader.dart';
 
 import 'package:flutter_cnode/views/topic_list.dart' as TopicList;
+import 'package:flutter_cnode/components/index.dart' as Component;
 import 'package:flutter_cnode/views/create_topic.dart';
 import 'package:flutter_cnode/views/user.dart';
 import 'package:flutter_cnode/views/collection.dart';
@@ -59,9 +60,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with AutomaticKeepAliveClientMixin {
   GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<Component.MessageState> _messagekey =
+      new GlobalKey<Component.MessageState>();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _pageController = PageController(initialPage: 0);
   }
@@ -82,10 +84,11 @@ class _MyHomePageState extends State<MyHomePage>
     TopicList.Page(key: ObjectKey('ask'), tab: 'ask'),
     TopicList.Page(key: ObjectKey('dev'), tab: 'dev'),
   ];
-  showSnackBar(String text) {
-    var snackbar =
-        SnackBar(content: Text(text), duration: Duration(seconds: 2));
-    _scaffoldkey.currentState.showSnackBar(snackbar);
+  showMessage(String text) {
+    _messagekey.currentState.show(child:Text(text,style: TextStyle(
+      color: Colors.white,
+      fontSize: 16
+    ),));
   }
 
   @override
@@ -145,8 +148,11 @@ class _MyHomePageState extends State<MyHomePage>
           );
         },
       ),
-      appBar: AppBar(
-        title: Text(widget.title),
+      appBar: Component.Message(
+        key: _messagekey,
+        child: AppBar(
+          title: Text(widget.title),
+        ),
       ),
       body: PageView(
         children: this._widgetOptions,
@@ -200,10 +206,11 @@ class _MyHomePageState extends State<MyHomePage>
               type: AppActions.RemoveToken,
               success: () {
                 Navigator.of(context).pop();
-                this.showSnackBar('登出成功');
+                
+                this.showMessage('登出成功');
               },
               error: () {
-                this.showSnackBar('登出失败');
+                this.showMessage('登出失败');
               },
             )));
           };
@@ -214,10 +221,10 @@ class _MyHomePageState extends State<MyHomePage>
                 type: AppActions.UpdateToken,
                 success: () {
                   Navigator.of(context).pop();
-                  this.showSnackBar('登录成功');
+                  this.showMessage('登录成功');
                 },
                 error: () {
-                  this.showSnackBar('登录失败，请重试');
+                  this.showMessage('登录失败，请重试');
                 },
                 payload: qrcode)));
           };
@@ -284,6 +291,5 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:flutter_cnode/api/request.dart' as Request;
-
+import 'package:flutter_cnode/components/index.dart' as Component;
 var api = new Request.Api();
 
 class CreateTopic extends StatefulWidget {
@@ -13,6 +13,8 @@ class CreateTopic extends StatefulWidget {
 class _CreateTopicState extends State<CreateTopic> {
   var _scaffoldkey = new GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  GlobalKey<Component.MessageState> _messagekey =
+      new GlobalKey<Component.MessageState>();
   TextEditingController _tabEditingController = TextEditingController();
   FocusNode _tabFocusNode = FocusNode();
   TextEditingController _titleEditingController = TextEditingController();
@@ -24,12 +26,13 @@ class _CreateTopicState extends State<CreateTopic> {
     {'value': 'ask', 'name': '问答'},
     {'value': 'dev', 'name': '测试'},
   ];
-  showSnackBar(String text) {
-    var snackbar =
-        SnackBar(content: Text(text), duration: Duration(seconds: 2));
-    _scaffoldkey.currentState.showSnackBar(snackbar);
+  showMessage(String text) {
+    _messagekey.currentState.show(
+        child: Text(
+      text,
+      style: TextStyle(color: Colors.white, fontSize: 16),
+    ));
   }
-
   showPicker() {
     print('tabList $_tabList ');
     _tabFocusNode.unfocus();
@@ -74,9 +77,9 @@ class _CreateTopicState extends State<CreateTopic> {
         _tabEditingController.text = '';
         _tab = null;
         print('publish ret $ret');
-        this.showSnackBar('发布成功');
+        this.showMessage('发布成功');
       } catch (e) {
-        this.showSnackBar(e.response.data['error_msg']);
+        this.showMessage(e.response.data['error_msg']);
       }
     }
   }
@@ -85,7 +88,9 @@ class _CreateTopicState extends State<CreateTopic> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldkey,
-      appBar: AppBar(
+      appBar: Component.Message(
+        key: _messagekey,
+        child: AppBar(
           title: Text('发布话题'),
           actions: <Widget>[
             FlatButton(
@@ -103,6 +108,7 @@ class _CreateTopicState extends State<CreateTopic> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[Text('取消')],
               ))),
+      ), 
       body: Container(
         // padding: EdgeInsets.all(10),
         child: Form(

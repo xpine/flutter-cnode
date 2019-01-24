@@ -18,34 +18,29 @@ class Page extends StatefulWidget {
 class _PageState extends State<Page> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
+  GlobalKey<Component.MessageState> _messagekey =
+      new GlobalKey<Component.MessageState>();
   GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   ScrollController _scrollController = new ScrollController();
   TextEditingController _textEditingController = TextEditingController();
   FocusNode _focusNode = FocusNode();
   FocusNode _modalFocusNode;
-  bool _loading = true;
   DateTime _now;
   var _topic = {};
   bool _init = true;
   var _replies = [];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     this._refresh();
   }
 
   Future<void> _refresh() async {
     print('get topic id:${widget.topicId}');
-
-    setState(() {
-      _loading = true;
-    });
     Response response =
         await api.dio.get('/topic/${widget.topicId}?mdrender=false');
 
     setState(() {
-      _loading = false;
       _topic = response.data['data'];
       _init = false;
       _replies = _topic['replies'];
@@ -53,11 +48,12 @@ class _PageState extends State<Page> {
     });
   }
 
-  showSnackBar(String text) {
-    var snackbar =
-        SnackBar(content: Text(text), duration: Duration(seconds: 2));
-
-    _scaffoldkey.currentState.showSnackBar(snackbar);
+  showMessage(String text) {
+    _messagekey.currentState.show(
+        child: Text(
+      text,
+      style: TextStyle(color: Colors.white, fontSize: 16),
+    ));
   }
 
   // 收藏取消收藏
@@ -67,23 +63,23 @@ class _PageState extends State<Page> {
       try {
         await api.dio.post('/topic_collect/de_collect',
             data: {'topic_id': _topic['id']});
-        this.showSnackBar('取消收藏成功');
+        this.showMessage('取消收藏成功');
         setState(() {
           _topic['is_collect'] = false;
         });
       } catch (e) {
-        this.showSnackBar('取消收藏失败');
+        this.showMessage('取消收藏失败');
       }
     } else {
       try {
         await api.dio
             .post('/topic_collect/collect', data: {'topic_id': _topic['id']});
-        this.showSnackBar('收藏成功');
+        this.showMessage('收藏成功');
         setState(() {
           _topic['is_collect'] = true;
         });
       } catch (e) {
-        this.showSnackBar('收藏失败');
+        this.showMessage('收藏失败');
       }
     }
   }
@@ -92,19 +88,22 @@ class _PageState extends State<Page> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldkey,
-      appBar: AppBar(
-        title: Text('话题详情'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.favorite,
-                color: (_topic['is_collect'] != null && _topic['is_collect'])
-                    ? Colors.red
-                    : Colors.white),
-            onPressed:
-                (_topic['is_collect'] != null) ? this.changeCollect : null,
-          )
-        ],
-      ),
+      appBar: Component.Message(
+          key: _messagekey,
+          child: AppBar(
+            title: Text('话题详情'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.favorite,
+                    color:
+                        (_topic['is_collect'] != null && _topic['is_collect'])
+                            ? Colors.red
+                            : Colors.white),
+                onPressed:
+                    (_topic['is_collect'] != null) ? this.changeCollect : null,
+              )
+            ],
+          )),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -124,7 +123,7 @@ class _PageState extends State<Page> {
                 onTap: this.tapTextField,
                 controller: _textEditingController,
                 focusNode: _focusNode,
-                decoration: InputDecoration(hintText: '请输入回复内容'),
+                decoration: InputDecoration(hintText: '请输入回复内容',contentPadding: EdgeInsets.all(8)),
               ),
             ),
             RaisedButton(
@@ -228,7 +227,7 @@ class _PageState extends State<Page> {
                     autofocus: true,
                     controller: _textEditingController,
                     focusNode: _modalFocusNode,
-                    decoration: InputDecoration(hintText: '请输入回复内容'),
+                    decoration: InputDecoration(hintText: '请输入回复内容',contentPadding: EdgeInsets.all(10)),
                   ),
                 ),
                 RaisedButton(
@@ -273,8 +272,13 @@ class _PageState extends State<Page> {
                   GestureDetector(
                     onTap: () async {
                       try {
-                        await api.dio.post('/reply/${reply['id']}/ups');
+                        var ret =
+                            await api.dio.post('/reply/${reply['id']}/ups');
+                        var action = ret.data['action'];
+
+                        var text = action == 'down' ? '取消点赞' : '点赞';
                         Navigator.of(context).pop();
+                        this.showMessage('$text成功');
                         _refreshIndicatorKey.currentState.show();
                       } catch (e) {
                         print(e);
@@ -308,6 +312,7 @@ class _PageState extends State<Page> {
         _textEditingController.text = '';
         _modalFocusNode.unfocus();
         _refreshIndicatorKey.currentState.show();
+        this.showMessage('回复成功');
       } catch (e) {
         print('reply $e');
       }
